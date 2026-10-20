@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholarship Monitoring System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded shadow" id="app">
+        <header class="flex justify-between items-center mb-6 border-b pb-4">
+            <div>
+                <h1 class="text-2xl font-bold">Scholarship Monitoring System</h1>
+                <p class="text-xs text-gray-500">Academic Compliance & Renewal Portal</p>
+            </div>
+            <div id="auth-header" class="text-right" style="display: none;">
+                <span id="user-display" class="font-bold text-sm mr-4"></span>
+                <button onclick="logout()" class="bg-gray-500 text-white px-3 py-1 rounded text-xs">Log Out</button>
+            </div>
+        </header>
+
+        <!-- LOGIN SECTION -->
+        <div id="login-section" class="mb-6 p-6 bg-gray-50 border rounded max-w-md mx-auto">
+            <h2 class="font-bold text-lg mb-4">System Login</h2>
+            <input type="email" id="email" placeholder="Email (e.g. staff@test.com)" class="border p-2 rounded w-full mb-3">
+            <input type="password" id="password" placeholder="Password" class="border p-2 rounded w-full mb-4">
+            <button onclick="login()" class="bg-blue-600 text-white w-full py-2 rounded font-semibold">Log In</button>
+            <p id="login-msg" class="text-red-500 text-sm mt-3 text-center"></p>
+        </div>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard-section" style="display: none;">
+            <!-- METRICS CARDS -->
+            <div class="grid grid-cols-4 gap-4 mb-6">
+                <div class="p-4 bg-gray-50 border rounded"><div class="text-xs text-gray-500 font-bold">TOTAL ASSIGNED</div><div id="m-total" class="text-2xl font-bold">0</div></div>
+                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded"><div class="text-xs text-yellow-700 font-bold">PENDING VERIF.</div><div id="m-pending" class="text-2xl font-bold text-yellow-800">0</div></div>
+                <div class="p-4 bg-green-50 border border-green-200 rounded"><div class="text-xs text-green-700 font-bold">COMPLIANT</div><div id="m-compliant" class="text-2xl font-bold text-green-800">0</div></div>
+                <div class="p-4 bg-red-50 border border-red-200 rounded"><div class="text-xs text-red-700 font-bold">WITH DEFICIENCY</div><div id="m-deficiency" class="text-2xl font-bold text-red-800">0</div></div>
+            </div>
+
+            <!-- SCHOLAR SUBMISSION FORM -->
+            <div id="scholar-form" class="mb-6 p-4 border rounded bg-blue-50" style="display: none;">
+                <h3 class="font-bold mb-2">Submit Academic Summary</h3>
+                <div class="grid grid-cols-4 gap-3 mb-3">
+                    <input type="text" id="ay" value="2026-2027" placeholder="Academic Year" class="border p-2 rounded">
+                    <input type="text" id="sem" value="1" placeholder="Semester" class="border p-2 rounded">
+                    <input type="number" id="gwa" step="0.01" placeholder="GWA (1.00 - 5.00)" class="border p-2 rounded">
+                    <input type="number" id="units" placeholder="Units Enrolled" class="border p-2 rounded">
+                    <input type="number" id="failed" placeholder="Failed Subjects" class="border p-2 rounded">
+                    <input type="number" id="inc" placeholder="INC Subjects" class="border p-2 rounded">
+                    <input type="number" id="dropped" placeholder="Dropped Subjects" class="border p-2 rounded">
+                    <input type="text" id="evidence" placeholder="Evidence URL" class="border p-2 rounded col-span-2">
+                    <button onclick="submitGrades()" class="bg-green-600 text-white font-bold px-4 py-2 rounded">Submit Record</button>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTERS -->
+            <div class="flex gap-4 mb-4 bg-gray-50 p-3 rounded border">
+                <input type="text" id="search" oninput="renderTable()" placeholder="Search Student ID or Name..." class="border p-2 rounded w-1/3">
+                <select id="filter-program" onchange="renderTable()" class="border p-2 rounded">
+                    <option value="ALL">All Programs</option>
+                    <option value="MERIT">Merit Scholar</option>
+                    <option value="COMMUNITY">Community Scholar</option>
+                </select>
+                <select id="filter-compliance" onchange="renderTable()" class="border p-2 rounded">
+                    <option value="ALL">All Compliance Statuses</option>
+                    <option value="Compliant">Compliant</option>
+                    <option value="With Deficiency">With Deficiency</option>
+                    <option value="Pending Evaluation">Pending Evaluation</option>
+                </select>
+            </div>
+
+            <!-- SUBMISSIONS TABLE -->
+            <table class="w-full text-left text-sm border-collapse border">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Student ID / Name</th>
+                        <th class="p-2 border">Program</th>
+                        <th class="p-2 border">GWA/Units</th>
+                        <th class="p-2 border">Fail/INC/Drop</th>
+                        <th class="p-2 border">Verification</th>
+                        <th class="p-2 border">Compliance & Reasons</th>
+                        <th class="p-2 border">Renewal</th>
+                        <th class="p-2 border">Staff Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
